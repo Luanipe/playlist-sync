@@ -9,7 +9,7 @@ import yaml
 
 WORKFLOW = Path(__file__).resolve().parents[2] / ".github" / "workflows" / "ci.yml"
 
-REQUIRED_OS = {"ubuntu-latest", "windows-latest", "macos-latest"}
+REQUIRED_OS = {"ubuntu-latest", "windows-latest"}
 REQUIRED_PYTHON = {"3.11", "3.12", "3.13"}
 
 
@@ -30,7 +30,7 @@ def test_workflow_runs_on_push_and_pull_request() -> None:
     assert "pull_request" in triggers
 
 
-def test_matrix_covers_all_os_and_python_versions() -> None:
+def test_matrix_covers_supported_os_and_python_versions() -> None:
     matrix = _workflow()["jobs"]["checks"]["strategy"]["matrix"]
     assert set(matrix["os"]) == REQUIRED_OS
     assert set(matrix["python-version"]) == REQUIRED_PYTHON

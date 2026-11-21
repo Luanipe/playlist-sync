@@ -71,8 +71,8 @@ Rules:
 ## Pull requests
 
 - Branch off `main` and keep `main` releasable.
-- CI (`.github/workflows/ci.yml`) must be green on Python 3.11–3.13, on Linux, Windows and
-  macOS.
+- CI (`.github/workflows/ci.yml`) must be green on Python 3.11–3.13 on Linux and Windows.
+  macOS was temporarily dropped during bootstrap; see the P0-T05 note in `docs/ROADMAP.md`.
 - The pull-request checklist mirrors the definition of done in `AGENTS.md`.
 - Do not force-push shared branches or rewrite published history.
 

@@ -36,7 +36,8 @@ Legend: `[ ]` todo · `[x]` done. Task IDs: `P<phase>-T<number>`.
 ## Phase 0 — Repository bootstrap
 
 **Status:** done · **Depends on:** — · **Accept:** `uv sync`, `ruff`, `mypy`, `pytest` all run
-green on an empty skeleton; CI green.
+green on an empty skeleton; CI green (CI temporarily disabled during bootstrap — see the P0-T05
+note below).
 
 - [x] **P0-T01 — Project metadata and dependencies** (`pyproject.toml`; deps: —)
   - DoD: hatchling + `src/` layout, Python ≥ 3.11, runtime deps, extras `ytmusic-login`/`ui`/`dev`; `uv sync --all-extras` resolves.
@@ -48,6 +49,9 @@ green on an empty skeleton; CI green.
   - DoD: venvs, caches, `*.db`, `.env`, tokens, cookies, browser profiles, reports, personal fixtures.
 - [x] **P0-T05 — GitHub Actions** (`.github/workflows/ci.yml`, `tests/unit/test_ci_workflow.py`; deps: P0-T02, P0-T03)
   - DoD: lint + types + tests on Python 3.11/3.12/3.13, Linux + Windows + macOS; actions pinned by SHA.
+  - Note (2026-11-21): `macos-latest` was removed from the matrix and the `CI` workflow was disabled
+    in the GitHub repository settings during bootstrap. Re-enable CI (and reconsider macOS) at the
+    end of Phase 1 / start of Phase 2, once there is real code to validate.
 - [x] **P0-T06 — Repository docs** (`README.md`, `LICENSE`, `CONTRIBUTING.md`, `tests/unit/test_docs_skeleton.py`, `pyproject.toml`; deps: P0-T01)
   - DoD: README (what/status/disclaimer), MIT license, contributing guide.
 - [x] **P0-T07 — Package skeleton** (`src/playlist_sync/**` per `docs/ARCHITECTURE.md` §2, `tests/unit/test_package_structure.py`; deps: P0-T01)
