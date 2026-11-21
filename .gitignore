@@ -1,0 +1,62 @@
+# --- Python ---------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+build/
+dist/
+.eggs/
+
+# --- Virtual environments -------------------------------------------------
+.venv/
+venv/
+env/
+ENV/
+
+# --- Tooling caches -------------------------------------------------------
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# --- Secrets and credentials ---------------------------------------------
+# Tokens and cookies belong in the OS keyring, never on disk; these patterns
+# are a safety net against accidental local copies.
+.env
+.env.*
+!.env.example
+*.token
+*.token.json
+tokens.json
+cookies.json
+*.cookies.json
+.tokens/
+
+# --- Local configuration --------------------------------------------------
+# The real config lives in the platformdirs user directory; ignore a local copy.
+/config.toml
+config.local.toml
+
+# --- Local data (platformdirs by default, but ignored if placed here) ------
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+browser-profile/
+reports/
+*.log
+
+# --- Fixtures that may contain personal data (never commit) ---------------
+tests/fixtures/private/
+*.personal.json
+
+# --- Editor / OS ----------------------------------------------------------
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

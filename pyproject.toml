@@ -1,0 +1,96 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "playlist-sync"
+version = "0.0.0"
+description = "Copy playlists, liked tracks and saved albums between streaming services (Spotify and YouTube Music, both directions)."
+# MIT license (see LICENSE). SPDX identifier, per PEP 639.
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.11"
+keywords = ["playlist", "spotify", "youtube-music", "music", "migration", "sync"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: End Users/Desktop",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Multimedia :: Sound/Audio",
+    "Typing :: Typed",
+]
+dependencies = [
+    "keyring>=25.0",
+    "platformdirs>=4.0",
+    "pydantic>=2.7",
+    "rapidfuzz>=3.9",
+    "rich>=13.7",
+    "spotipy>=2.23",
+    "tenacity>=8.2",
+    "typer>=0.12",
+    "ytmusicapi>=1.8",
+]
+
+[project.optional-dependencies]
+# YouTube Music browser login (Playwright). Chromium is downloaded on demand.
+ytmusic-login = ["playwright>=1.44"]
+# Local web UI (phase 7). The framework (FastAPI+HTMX vs NiceGUI) is chosen via an
+# ADR at the start of phase 7, so no dependency is pinned yet.
+ui = []
+dev = [
+    "mypy>=1.11",
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "pyyaml>=6.0",
+    "ruff>=0.6",
+]
+
+[project.scripts]
+playlist-sync = "playlist_sync.cli:app"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+# Docs contain illustrative, hand-formatted Python snippets; do not touch them.
+extend-exclude = ["docs"]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "F",   # pyflakes
+    "I",   # isort (import ordering)
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "SIM", # flake8-simplify
+    "RUF", # ruff-specific rules
+]
+# Line length is owned by `ruff format`, which cannot reflow long strings/comments.
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+no_implicit_optional = true
+check_untyped_defs = true
+
+# The domain models and the core business logic are held to `--strict`.
+[[tool.mypy.overrides]]
+module = ["playlist_sync.domain.*", "playlist_sync.core.*"]
+strict = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers --strict-config"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/playlist_sync"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/playlist_sync", "tests", "docs", "pyproject.toml", "AGENTS.md", "README.md", "LICENSE", "CONTRIBUTING.md"]
