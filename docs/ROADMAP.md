@@ -62,7 +62,7 @@ note below).
 **Status:** active · **Depends on:** Phase 0 · **Accept:** contract suite green for `FakeService`;
 singleton and registry fully tested; `mypy --strict` clean on `domain/`, `core/`.
 
-- [ ] **P1-T01 — Exception hierarchy** (`src/playlist_sync/errors.py`, `tests/unit/test_errors.py`; deps: —)
+- [x] **P1-T01 — Exception hierarchy** (`src/playlist_sync/errors.py`, `tests/unit/test_errors.py`; deps: —)
   - DoD: `AuthExpiredError`, `RateLimitError`, `ServiceUnavailableError`, `TrackNotFoundError`; tested.
 - [ ] **P1-T02 — Domain models** (`src/playlist_sync/domain/models.py`, `tests/unit/test_domain_models.py`; deps: P1-T01)
   - DoD: frozen `dataclass(slots=True)` `Track`, `Playlist`, `Album` per `ARCHITECTURE.md` §3; immutability tested.
