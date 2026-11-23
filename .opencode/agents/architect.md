@@ -23,6 +23,9 @@ permissions:
   - action: shell
     resource: "git ls-files *"
     effect: allow
+  - action: subagent
+    resource: "*"
+    effect: deny
 ---
 You are the architect for playlist-sync. You never modify files and you never implement.
 

@@ -76,12 +76,26 @@ in `pyproject.toml`. Chosen for simplicity and permissiveness. Unlike Apache-2.0
 explicit patent grant, which is acceptable for this project.
 
 ### ADR-015 — AI-driven development workflow
-**Status:** accepted
+**Status:** accepted (push policy amended by ADR-016)
 Development is driven by autonomous OpenCode agents following `docs/AGENT_WORKFLOW.md`. Work is
 one roadmap task per invocation; every task must pass the quality gates and a read-only `reviewer`
-(plus `security-audit` when it touches auth, secrets, network, UI or dependencies) before a local
-Conventional Commit. Agents never push; the owner reviews and pushes. Roadmap task IDs are stable
-(`P<phase>-T<number>`).
+(plus `security-audit` when it touches auth, secrets, network, UI or dependencies) before a
+Conventional Commit. Roadmap task IDs are stable (`P<phase>-T<number>`).
+
+### ADR-016 — Issue-driven workflow with human-reviewed PRs
+**Status:** accepted
+Every **pending** `docs/ROADMAP.md` task is mirrored 1:1 as a GitHub issue
+(`scripts/sync_roadmap_issues.py`, mapping in `docs/ISSUES.md`). Agents implement each task on a
+dedicated branch, tick the roadmap, commit and open a PR against `main` through
+`scripts/open_pr.sh`, which validates the branch, title and body and never force-pushes. Agents
+never push to `main` and never merge or close a PR; the owner performs the human review and the
+merge. The PR links its issue with `Closes #<number>`, so the issue closes automatically on merge.
+
+`opencode.json` denies direct `git push`, PR merges/closes, issue deletions and raw `gh api`, and
+denies editing the policy, the scripts and the OpenCode definitions. It is a **local guardrail, not
+a security boundary**: shell tooling can execute code, so the real boundary is GitHub branch
+protection on `main` (require a PR and review, block direct pushes and force-pushes) plus the human
+review. This replaces the "local commits only / never push" part of ADR-015.
 
 ---
 

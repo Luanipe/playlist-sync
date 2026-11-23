@@ -15,7 +15,16 @@ COMMANDS_DIR = ROOT / ".opencode" / "commands"
 ROADMAP = ROOT / "docs" / "ROADMAP.md"
 
 EXPECTED_AGENTS = ("architect", "reviewer", "security-audit")
-EXPECTED_COMMANDS = ("next-task", "autopilot", "check", "review", "security", "phase-report")
+EXPECTED_COMMANDS = (
+    "next-task",
+    "autopilot",
+    "sync-issues",
+    "update-pr",
+    "check",
+    "review",
+    "security",
+    "phase-report",
+)
 
 
 def _frontmatter(path: Path) -> dict[str, Any]:
@@ -49,6 +58,51 @@ def test_commit_allowed_but_push_and_rm_denied() -> None:
     assert _rule("shell", "git commit *", "allow") in rules
     assert _rule("shell", "git push *", "deny") in rules
     assert _rule("shell", "rm -rf *", "deny") in rules
+
+
+def test_github_destructive_actions_are_denied() -> None:
+    rules = _config()["permissions"]
+    for resource in (
+        "gh pr create *",
+        "gh pr edit *",
+        "gh pr merge *",
+        "gh pr close *",
+        "gh issue close *",
+        "gh issue delete *",
+        "gh issue transfer *",
+        "gh issue lock *",
+        "gh issue unlock *",
+        "gh issue pin *",
+        "gh issue unpin *",
+        "gh label delete *",
+        "gh label edit *",
+        "gh api *",
+    ):
+        assert _rule("shell", resource, "deny") in rules, resource
+
+
+def test_no_broad_allow_can_override_the_denies() -> None:
+    rules = _config()["permissions"]
+    for resource in ("gh issue *", "gh label *", "gh pr *", "git push *"):
+        assert _rule("shell", resource, "allow") not in rules, resource
+
+
+def test_agents_cannot_edit_the_guardrail() -> None:
+    rules = _config()["permissions"]
+    for resource in ("opencode.json", "scripts/**", ".opencode/**", ".github/workflows/**"):
+        assert _rule("edit", resource, "deny") in rules, resource
+
+
+def test_review_agents_cannot_spawn_subagents() -> None:
+    for name in EXPECTED_AGENTS:
+        permissions = _frontmatter(AGENTS_DIR / f"{name}.md")["permissions"]
+        assert _rule("subagent", "*", "deny") in permissions, name
+
+
+def test_reviewer_can_inspect_the_branch_and_pr_read_only() -> None:
+    permissions = _frontmatter(AGENTS_DIR / "reviewer.md")["permissions"]
+    for resource in ("git branch *", "git rev-parse *", "gh pr view *", "gh pr diff *"):
+        assert _rule("shell", resource, "allow") in permissions, resource
 
 
 def test_expected_agents_exist_and_are_read_only() -> None:

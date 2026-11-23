@@ -9,7 +9,8 @@ English.
 1. Read [`AGENTS.md`](AGENTS.md) — it lists the golden rules that must never be violated.
 2. Read the design docs in [`docs/`](docs/): `PRD.md`, `ARCHITECTURE.md`, `MATCHING.md`,
    `AUTH.md`, `DECISIONS.md` and `ROADMAP.md`.
-3. Work one roadmap phase at a time, and make one focused change per commit.
+3. Work one roadmap phase at a time, one task per branch and pull request. Pending tasks are
+   mirrored as GitHub issues; the mapping is in [`docs/ISSUES.md`](docs/ISSUES.md).
 
 Golden rules (summary): additive only — never delete; the core never imports service SDKs;
 dependency injection into the core; `plan` is read-only; no secrets in the repo; tests never
@@ -68,13 +69,20 @@ Rules:
 - Never commit secrets, tokens, cookies, `*.db` files, or recorded fixtures containing
   personal data (see `.gitignore`).
 
-## Pull requests
+## Issues and pull requests
 
-- Branch off `main` and keep `main` releasable.
+- Branch off an up-to-date `main`: `task/P<phase>-T<n>-<slug>` for roadmap tasks, or
+  `chore|docs|fix|test|refactor|perf/<slug>` for everything else. Never work directly on `main`.
+- One task per branch and pull request. Tick the task in `docs/ROADMAP.md` in the same PR and link
+  its issue with `Closes #<number>`.
 - CI (`.github/workflows/ci.yml`) must be green on Python 3.11–3.13 on Linux and Windows.
   macOS was temporarily dropped during bootstrap; see the P0-T05 note in `docs/ROADMAP.md`.
-- The pull-request checklist mirrors the definition of done in `AGENTS.md`.
-- Do not force-push shared branches or rewrite published history.
+- The pull-request template mirrors the definition of done in `AGENTS.md`.
+- The human owner reviews and merges. Agents may push task branches through
+  `scripts/open_pr.sh` but never push to `main`, force-push, merge or close a PR.
+- `opencode.json` is a local guardrail, not a security boundary. Enable branch protection on
+  `main` (require a PR and review, block direct pushes and force-pushes) in the repository settings.
+- If the roadmap changes, run `python scripts/sync_roadmap_issues.py` so the issues stay in sync.
 
 ## Adding a service adapter
 
