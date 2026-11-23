@@ -93,4 +93,4 @@ addopts = "-ra --strict-markers --strict-config"
 packages = ["src/playlist_sync"]
 
 [tool.hatch.build.targets.sdist]
-include = ["src/playlist_sync", "tests", "docs", "pyproject.toml", "AGENTS.md", "README.md", "LICENSE", "CONTRIBUTING.md"]
+include = ["src/playlist_sync", "tests", "scripts", "docs", "pyproject.toml", "AGENTS.md", "README.md", "LICENSE", "CONTRIBUTING.md"]

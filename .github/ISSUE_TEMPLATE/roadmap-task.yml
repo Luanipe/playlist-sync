@@ -1,0 +1,45 @@
+name: Roadmap task
+description: Mirror a task from docs/ROADMAP.md (normally created by scripts/sync_roadmap_issues.py)
+title: "P<phase>-T<n> — "
+labels: ["roadmap"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The roadmap is the source of truth. Add or change tasks in `docs/ROADMAP.md` first, then
+        run `python scripts/sync_roadmap_issues.py`. This template is for exceptions only.
+  - type: input
+    id: task-id
+    attributes:
+      label: Task ID
+      description: Stable ID from docs/ROADMAP.md
+      placeholder: P1-T03
+    validations:
+      required: true
+  - type: input
+    id: phase
+    attributes:
+      label: Phase
+      placeholder: "1"
+    validations:
+      required: true
+  - type: textarea
+    id: files
+    attributes:
+      label: Files
+      description: Files to create or change
+      placeholder: src/playlist_sync/services/base.py, tests/unit/test_services_base.py
+    validations:
+      required: true
+  - type: input
+    id: deps
+    attributes:
+      label: Depends on
+      placeholder: P1-T02
+  - type: textarea
+    id: dod
+    attributes:
+      label: Definition of done
+      description: Copy the DoD from docs/ROADMAP.md, including test expectations
+    validations:
+      required: true

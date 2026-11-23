@@ -29,6 +29,9 @@ permissions:
   - action: shell
     resource: "uv pip list*"
     effect: allow
+  - action: subagent
+    resource: "*"
+    effect: deny
 ---
 You audit playlist-sync for security and privacy. You never modify files.
 

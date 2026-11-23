@@ -16,7 +16,8 @@ You are the primary developer of this project. Read this file fully before every
 | `docs/AUTH.md` | Spotify PKCE and YouTube Music (Playwright) login |
 | `docs/DECISIONS.md` | Decisions already made (ADR log). Do not re-litigate them |
 | `docs/ROADMAP.md` | Phases, tasks, acceptance criteria. Your work queue |
-| `docs/AGENT_WORKFLOW.md` | Autonomous agent loop: roles, gates, commit policy, escalation |
+| `docs/ISSUES.md` | Generated mapping between roadmap tasks and GitHub issues |
+| `docs/AGENT_WORKFLOW.md` | Autonomous agent loop: roles, issues, branches, PR policy, gates, escalation |
 
 If code and docs disagree, **stop and ask**; do not silently pick one.
 If you must make a new design decision, add an entry to `docs/DECISIONS.md` in the same PR.
@@ -59,6 +60,8 @@ uv run ruff check . && uv run ruff format --check .
 uv run mypy src/playlist_sync
 uv run pytest -q              # must pass offline
 uv run playlist-sync --help   # CLI entry point
+python scripts/sync_roadmap_issues.py --dry-run   # issue preview (needs gh auth + network)
+scripts/open_pr.sh --help                         # branch push + PR helper (bash)
 ```
 
 All of lint, types and tests must pass before you consider a task done.
@@ -73,21 +76,27 @@ All of lint, types and tests must pass before you consider a task done.
   Adapters translate vendor exceptions into these. Never leak vendor exceptions to the core.
 - Logging with `logging` (no `print` outside the CLI/UI layer). Never log tokens, cookies or headers.
 - Commits: Conventional Commits (`feat:`, `fix:`, `test:`, `docs:`, `refactor:`, `chore:`).
-- One phase at a time. One focused change per commit.
+- One phase at a time. One focused change per commit. One task per branch and PR.
+- GitHub issues mirror roadmap tasks; the PR links its issue and is reviewed and merged by a human.
 
 ## How to work
 
 Follow `docs/AGENT_WORKFLOW.md` for the full autonomous loop.
 
 1. Open `docs/ROADMAP.md`, find the first unchecked task of the current phase (stable ID
-   `P<phase>-T<n>`).
+   `P<phase>-T<n>`), and locate its GitHub issue in `docs/ISSUES.md`.
 2. Read the docs relevant to it. Restate the plan briefly before large changes.
-3. Write tests first or together with the code. Every new behavior has a test.
-4. Run lint, types and tests. Fix everything.
-5. Tick the task in `docs/ROADMAP.md` and note anything deferred.
-6. Commit locally with a Conventional Commit that includes the task ID
-   (e.g. `feat(P1-T03): ...`). Never push.
-7. Stop at the end of each task; stop and summarize at the end of each phase.
+3. Create a branch from `origin/main`: `task/P<phase>-T<n>-<slug>` for roadmap tasks or
+   `chore|docs|fix|test|refactor|perf/<slug>` for everything else.
+4. Write tests first or together with the code. Every new behavior has a test.
+5. Run lint, types and tests. Fix everything; run `reviewer` (and `security-audit` when relevant).
+6. Tick the task in `docs/ROADMAP.md`, note anything deferred, and run
+   `python scripts/sync_roadmap_issues.py` to refresh `docs/ISSUES.md`. If the PR is closed without
+   merge, revert the tick and rerun the sync.
+7. Commit with a Conventional Commit that includes the task ID (e.g. `feat(P1-T03): ...`).
+8. Open a PR against `main` with `scripts/open_pr.sh` and a body from
+   `.github/pull_request_template.md`, referencing the issue with `Closes #<issue>`. Never merge.
+9. Stop at the end of each task; stop and summarize at the end of each phase.
 
 **Ask the human instead of guessing** when: a doc is ambiguous, an external API behaves
 differently from the docs, a decision would change a golden rule, or a task needs credentials.
@@ -100,11 +109,15 @@ differently from the docs, a decision would change a golden rule, or a task need
 - Hardcode a Client ID, secret or user data.
 - Swallow exceptions silently or catch bare `Exception` without re-raising or logging.
 - Rewrite the architecture without an ADR approved by the human.
+- Push to `main`, force-push, merge a PR or bypass `scripts/open_pr.sh`.
 
 ## Definition of done (per task)
 
 - [ ] Behavior implemented as described in the docs
 - [ ] Tests added and passing offline
-- [ ] `ruff`, `mypy`, `pytest` green
+- [ ] `ruff`, `ruff format`, `mypy`, `pytest` green
 - [ ] No golden rule violated
 - [ ] Docs/ROADMAP updated; new decisions logged in `DECISIONS.md`
+- [ ] GitHub issue referenced in the PR (`Closes #<issue>`)
+- [ ] Dedicated branch, Conventional Commit with the task ID, PR open for human review
+- [ ] Agent stopped without merging

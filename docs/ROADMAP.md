@@ -1,21 +1,27 @@
 # ROADMAP
 
 Work queue for humans and agents. Read `docs/AGENT_WORKFLOW.md` for the autonomous loop and
-`AGENTS.md` for the golden rules.
+`AGENTS.md` for the golden rules. Every pending task is mirrored as a GitHub issue; the generated
+mapping lives in `docs/ISSUES.md`.
 
 **Current phase: 1**
 
 ## How agents use this file
 
 - Work **one task per invocation**: pick the first unchecked `P<phase>-T<n>` of the current phase.
-- Read the task's `Files`, `Deps` and `DoD` before coding, and the docs listed there.
+- Read the task's `Files`, `Deps` and `DoD` before coding, and the docs listed there. Find the
+  matching issue in `docs/ISSUES.md`.
+- Create a branch `task/P<phase>-T<n>-<slug>` from `origin/main`; never work on `main`.
 - Do not start the next task. Stop at the end of the task (and summarize at the end of the phase).
-- Before committing: tick the task, run the four gates, and get `reviewer` APPROVE
+- Before opening the PR: tick the task, run the four gates, and get `reviewer` APPROVE
   (`security-audit` too when the task touches auth/secrets/network/UI/dependencies).
+- Open the PR with `scripts/open_pr.sh`, referencing the issue (`Closes #<number>`). **Never merge**;
+  the human reviews and merges.
 - If a task is ambiguous or conflicts with the docs, **stop and ask**.
 - IDs are stable. Never renumber a completed task.
 
-Legend: `[ ]` todo · `[x]` done. Task IDs: `P<phase>-T<number>`.
+Legend: `[ ]` todo · `[x]` implemented and submitted in a PR (complete once the PR is merged).
+Task IDs: `P<phase>-T<number>`. If a PR is closed without merge, the task returns to `[ ]`.
 
 ## Phase index
 
